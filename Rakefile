@@ -7,6 +7,8 @@ end
 require "rake"
 require "rspec"
 require "rspec/core/rake_task"
+require "bundler/gem_tasks"
+require "gemfury/tasks"
 
 RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = "spec/**/*_spec.rb"
@@ -26,3 +28,10 @@ Rake::RDocTask.new do |rdoc|
 end
 
 task :default => :spec
+
+Rake::Task['release'].clear
+
+desc "Tag and release to gemfury under the 'citybase' organization"
+task 'release' => 'release:source_control_push'  do
+  Rake::Task['fury:release'].invoke('rails_config.gemspec', 'citybase')
+end
